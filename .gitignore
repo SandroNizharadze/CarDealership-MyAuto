@@ -1,18 +1,42 @@
-# Build artifacts
+# Ignore build and output directories
 bin/
 obj/
 
-# Rider/VSCode/Visual Studio cache and settings
-.vscode/
+# Ignore user-specific files
+.DS_Store
+
+# Ignore IDE and editor specific files
+.vs/
 .idea/
-*.suo
 *.user
-*.cache
-*.csproj.user
+*.suo
+*.userprefs
 
-# Dependency folders
+# Ignore NuGet packages directory
 packages/
-node_modules/
 
-# Logs and temporary files
+# Ignore compiled files
+*.dll
+*.pdb
+*.exe
+
+# Ignore logs and diagnostics
+logs/
 *.log
+
+# Ignore local development environment files
+appsettings.Development.json
+
+# Ignore npm and Node.js files
+node_modules/
+npm-debug.log
+
+# Ignore temp files
+*.tmp
+*.temp
+
+# Ignore macOS specific files
+._*
+
+# Ignore Visual Studio Code settings
+.vscode/
