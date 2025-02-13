@@ -1,0 +1,18 @@
+# Build artifacts
+bin/
+obj/
+
+# Rider/VSCode/Visual Studio cache and settings
+.vscode/
+.idea/
+*.suo
+*.user
+*.cache
+*.csproj.user
+
+# Dependency folders
+packages/
+node_modules/
+
+# Logs and temporary files
+*.log

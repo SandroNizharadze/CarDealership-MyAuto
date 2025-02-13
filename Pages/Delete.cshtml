@@ -1,0 +1,16 @@
+﻿@page "{id}"
+@model MyAuto.Pages.DeleteModel
+@{
+    ViewData["Title"] = "Delete";
+
+}
+
+<h1>Delete Confirmation</h1>
+
+<div class="alert alert-danger">
+    <h5>Are you sure you want to delete?</h5>
+    <form method="post">
+        <button type="submit" class="btn btn-danger">Yes</button>
+        <a asp-page="/Index" class="btn btn-secondary">No</a>
+    </form>
+</div>

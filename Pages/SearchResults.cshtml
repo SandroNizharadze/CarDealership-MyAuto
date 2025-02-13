@@ -1,0 +1,108 @@
+﻿@page
+@model SearchResultsModel
+@{
+    ViewData["Title"] = "Search Results";
+}
+<h1>Search Results</h1>
+<div class="container my-4">
+    <div class="row justify-content-center">
+        @if (Model.Cars != null)
+        {
+            var carsList = Model.Cars.ToList();
+            @foreach (var car in carsList)
+            {
+                <div class="col-12 mb-4">
+                    <a asp-page="/Details" asp-route-ID="@car.Id" class="card custom-card">
+                        <div class="row g-0">
+                            <!-- Left section: Car photo (square) -->
+                            <div class="col-md-3">
+                                @if (car.Photos != null && car.Photos.Any())
+                                {
+                                    <img src="@car.Photos.First().PhotoPath" class="img-fluid rounded-start car-photo" alt="Car Image">
+                                }
+                                else
+                                {
+                                    <img src="/images/noImage.jpg" class="img-fluid rounded-start car-photo" alt="No Image Available">
+                                }
+                            </div>
+
+                            <!-- Middle section: Specifications -->
+                            <div class="col-md-6">
+    <div class="card-body">
+        <h5 class="card-title">@car.Name</h5>
+        <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td><strong>Manufacturer:</strong></td>
+                    <td>@(car.Manufacturer?.ToString() ?? "N/a")</td>
+                    <td><strong>Engine:</strong></td>
+                    <td>@(car.Engine ?? "N/a")</td>
+                </tr>
+                <tr>
+                    <td><strong>Model:</strong></td>
+                    <td>@(car.Model ?? "N/a")</td>
+                    <td><strong>Transmission:</strong></td>
+                    <td>@(car.Transmission?.ToString() ?? "N/a")</td>
+                </tr>
+                <tr>
+                    <td><strong>Year:</strong></td>
+                    <td>@(car.Year?.ToString() ?? "N/a")</td>
+                    <td><strong>Fuel Type:</strong></td>
+                    <td>@(car.FuelType?.ToString() ?? "N/a")</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+                            <!-- Right section: Price -->
+                            <div class="col-md-3 d-flex justify-content-center align-items-center bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        @(car.Price != null ? $"{car.Price}$" : "Fasi Shetanxmebit")
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .custom-card {
+        width: 100%;
+        height: 200px; /* Adjust the height to be 4 times smaller than the width */
+        display: flex;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin: 15px 0;
+        text-decoration: none; /* Remove default underline from anchor tag */
+    }
+
+    .custom-card .row {
+        height: 100%;
+        width: 100%;
+    }
+
+    .custom-card .col-md-3 {
+        padding: 0;
+    }
+
+    .custom-card .col-md-6 {
+        padding: 10px;
+    }
+
+    .car-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center center; /* Centers the image within the container */
+    }
+
+    .card-body {
+        padding: 10px;
+    }
+</style>

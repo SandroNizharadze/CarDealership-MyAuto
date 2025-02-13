@@ -1,0 +1,137 @@
+﻿@page "/edit/{id?}"
+@model MyAuto.Pages.EditModel
+@using MyAuto.Models
+@{
+    ViewData["Title"] = "Edit";
+    var PageHeader = Model.Car != null && Model.Car.Id > 0 ? "Edit" : "Create";
+}
+
+<h1>@PageHeader</h1>
+
+@if (Model.Car != null)
+{
+    <form method="post" class="container my-4" enctype="multipart/form-data">
+        <input hidden asp-for="Car.Id" />
+        <input hidden asp-for="Car.Photos" />
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label asp-for="Car.Category" class="form-label">Category</label>
+                <select asp-for="Car.Category" class="form-select" asp-items="Html.GetEnumSelectList<Category>()">
+                    <option value="">Select Category</option>
+                </select>
+                <span asp-validation-for="Car.Category" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label for="manufacturer" class="form-label">Manufacturer</label>
+                <select id="manufacturer" name="manufacturer" class="form-select">
+                    <option value="">Select Manufacturer</option>
+                    @foreach (var manufacturer in Enum.GetValues(typeof(Manufacturer)))
+                    {
+                        <option value="@manufacturer">@manufacturer</option>
+                    }
+                </select>
+                <span asp-validation-for="Car.Manufacturer" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label for="model" class="form-label">Model</label>
+                <select id="model" name="model" class="form-select">
+                    <option value="">Select Model</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Car.Name" class="form-label"></label>
+            <input asp-for="Car.Name" class="form-control" placeholder="Name" />
+            <span asp-validation-for="Car.Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Car.Price" class="form-label"></label>
+            <input asp-for="Car.Price" class="form-control" placeholder="Price" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Car.Mileage" class="form-label"></label>
+            <input asp-for="Car.Mileage" class="form-control" placeholder="Mileage" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Car.Engine" class="form-label"></label>
+            <input asp-for="Car.Engine" class="form-control" placeholder="Engine" />
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Car.Transmission" class="form-label">Transmission</label>
+            <select asp-for="Car.Transmission" class="form-select" asp-items="Html.GetEnumSelectList<Transmission>()">
+                <option value="">Select Transmission</option>
+            </select>
+            <span asp-validation-for="Car.Transmission" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Car.FuelType" class="form-label">Fuel</label>
+            <select asp-for="Car.FuelType" class="form-select" asp-items="Html.GetEnumSelectList<FuelType>()">
+                <option value="">Fuel Type</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Car.Year" class="form-label"></label>
+            <input asp-for="Car.Year" class="form-control" placeholder="Year" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Car.VIN" class="form-label"></label>
+            <input asp-for="Car.VIN" class="form-control" placeholder="VIN" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Car.Description" class="form-label"></label>
+            <input asp-for="Car.Description" class="form-control" placeholder="Description" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Car.Tel" class="form-label"></label>
+            <input asp-for="Car.Tel" class="form-control" placeholder="Tel" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="UploadedPhotos" class="form-label">Upload Photos</label>
+            <input type="file" asp-for="UploadedPhotos" multiple class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-page="/Index" class="btn btn-secondary">Cancel</a>
+    </form>
+}
+else
+{
+    <h1>Not Found</h1>
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#manufacturer').change(function () {
+                var manufacturer = $(this).val();
+                $('#model').empty().append('<option value="">Select Model</option>');
+                if (manufacturer) {
+                    $.getJSON('@Url.Page("Edit", "Models", new { area = "" })', { manufacturer: manufacturer })
+                        .done(function (data) {
+                            $.each(data, function (index, model) {
+                                $('#model').append('<option value="' + model.value + '">' + model.text + '</option>');
+                            });
+                        })
+                        .fail(function () {
+                            alert('Failed to load models.');
+                        });
+                }
+            });
+        });
+    </script>
+}

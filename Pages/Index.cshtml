@@ -1,0 +1,317 @@
+﻿@page
+@model CarSearchModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!-- Filtration and Search Boxes -->
+<div class="container my-4"
+    style="border: 1px solid #ccc; border-radius: 10px; background-color: white; padding: 20px;">
+    <form method="get" asp-page="/SearchResults">
+        <div class="row g-3">
+            <!-- Manufacturer Dropdown -->
+            <div class="col-md-4">
+                <label for="manufacturers" class="form-label">Manufacturer</label>
+                <select id="manufacturers" name="Manufacturer" class="form-select" onchange="updateModels()">
+                    <option value="">Select Manufacturer</option>
+                    @foreach (var manufacturer in Model.CategoryModelMapping.Keys)
+                    {
+                        <option value="@manufacturer">@manufacturer</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Model Dropdown -->
+            <div class="col-md-4">
+                <label for="models" class="form-label">Model</label>
+                <select id="models" name="Model" class="form-select">
+                    <option value="">Select Model</option>
+                </select>
+            </div>
+
+            <!-- Price Range -->
+            <div class="col-md-2">
+                <label for="minPrice" class="form-label">Price</label>
+                <select id="minPrice" name="MinPrice" class="form-select" onchange="updateMaxPrice()">
+                    <option value="">From</option>
+                    <option value="1500">1500</option>
+                    <option value="3000">3000</option>
+                    <option value="5000">5000</option>
+                    <option value="10000">10000</option>
+                    <option value="15000">15000</option>
+                    <option value="20000">20000</option>
+                    <option value="50000">50000</option>
+                    <option value="70000">70000</option>
+                    <option value="90000">90000</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label for="maxPrice" class="form-label" style="color: transparent;">.</label>
+                <select id="maxPrice" name="MaxPrice" class="form-select">
+                    <option value="">To</option>
+                    <option value="1500">1500</option>
+                    <option value="3000">3000</option>
+                    <option value="5000">5000</option>
+                    <option value="10000">10000</option>
+                    <option value="20000">20000</option>
+                    <option value="50000">50000</option>
+                    <option value="70000">70000</option>
+                    <option value="90000">90000</option>
+                </select>
+            </div>
+
+            <!-- Year Range -->
+            <div class="col-md-2">
+                <label for="minYear" class="form-label">Year</label>
+                <select id="minYear" name="MinYear" class="form-select" onchange="updateMaxYear()">
+                    <option value="">From</option>
+                    <option value="1980">1980</option>
+                    <option value="1985">1985</option>
+                    <option value="1990">1990</option>
+                    <option value="1995">1995</option>
+                    <option value="2000">2000</option>
+                    <option value="2005">2005</option>
+                    <option value="2010">2010</option>
+                    <option value="2015">2015</option>
+                    <option value="2020">2020</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label for="maxYear" class="form-label" style="color: transparent;">.</label>
+                <select id="maxYear" name="MaxYear" class="form-select">
+                    <option value="">To</option>
+                    <option value="1980">1980</option>
+                    <option value="1985">1985</option>
+                    <option value="1990">1990</option>
+                    <option value="1995">1995</option>
+                    <option value="2000">2000</option>
+                    <option value="2005">2005</option>
+                    <option value="2010">2010</option>
+                    <option value="2015">2015</option>
+                    <option value="2020">2020</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+
+            <!-- Fuel Type -->
+            <div class="col-md-2">
+                <label for="FuelType" class="form-label">Fuel Type</label>
+                <select id="FuelType" name="FuelType" class="form-select">
+                    <option value="">Select Fuel Type</option>
+                    <option value="Petrol">Petrol</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+            </div>
+
+            <!-- Transmission Type -->
+            <div class="col-md-2">
+                <label for="Transmission" class="form-label">Transmission</label>
+                <select id="Transmission" name="Transmission" class="form-select">
+                    <option value="">Select Transmission</option>
+                    <option value="Manual">Manual</option>
+                    <option value="Automatic">Automatic</option>
+                    <option value="SemiAutomatic">Semi-Automatic</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Deserialize the mapping from the ViewData
+    const categoryModelMapping = @Html.Raw(ViewData["CategoryModelMapping"]);
+
+    function updateModels() {
+        const manufacturer = document.getElementById("manufacturers").value;
+        const modelsDropdown = document.getElementById("models");
+
+        // Clear existing options
+        modelsDropdown.innerHTML = '<option value="">Select Model</option>';
+
+        if (manufacturer && categoryModelMapping[manufacturer]) {
+            categoryModelMapping[manufacturer].forEach(model => {
+                const option = document.createElement("option");
+                option.value = model;
+                option.text = formatText(model);
+                modelsDropdown.add(option);
+            });
+        }
+    }
+
+    // Function to replace underscores with spaces
+    function formatText(text) {
+        return text.replace(/_/g, " ");
+    }
+
+    function updateMaxPrice() {
+        var minPrice = document.getElementById("minPrice").value;
+        var maxPrice = document.getElementById("maxPrice");
+        var options = maxPrice.options;
+
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].value && parseInt(options[i].value) <= parseInt(minPrice)) {
+                options[i].style.display = 'none';
+            } else {
+                options[i].style.display = 'block';
+            }
+        }
+    }
+
+    function updateMaxYear() {
+        var minYear = document.getElementById("minYear").value;
+        var maxYear = document.getElementById("maxYear");
+        var options = maxYear.options;
+
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].value && parseInt(options[i].value) <= parseInt(minYear)) {
+                options[i].style.display = 'none';
+            } else {
+                options[i].style.display = 'block';
+            }
+        }
+    }
+</script>
+
+
+
+<!-- Car Carousel -->
+<div id="carCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        @if (Model.Cars != null)
+        {
+            var carsList = Model.Cars.ToList();
+            for (int i = 0; i < carsList.Count; i += 4)
+            {
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <div class="d-flex justify-content-center">
+                        @for (int j = i; j < i + 4 && j < carsList.Count; j++)
+                        {
+                            var car = carsList[j];
+                            <a asp-page="/Details" asp-route-ID="@car.Id" class="card m-3">
+                                <div class="card-header text-center">
+                                    <h3>@car.Name</h3>
+                                </div>
+                                @if (car.Photos != null && car.Photos.Any())
+                                {
+                                    <img class="card-img-top" src="@car.Photos.First().PhotoPath" alt="Car Image">
+                                }
+                                else
+                                {
+                                    <img src="/images/noImage.jpg" class="card-img-top" alt="No Image Available">
+                                }
+                                <div class="card-footer text-center">
+                                    <h3>
+                                        @if (car.Price != null)
+                                        {
+                                            <span class="text-success">@(car.Price.ToString() + "$")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger" style="size: 5pt;">Fasi Shetanxmebit</span>
+                                        }
+                                    </h3>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<style>
+    .carousel-control-prev,
+    .carousel-control-next {
+        background-color: rgba(0, 0, 0, 0.5);
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        /* Position the buttons */
+        position: absolute;
+        top: -1.6%;
+        right: 30px;
+
+    }
+
+    .carousel-control-prev {
+        left: 1200px;
+    }
+
+    .card {
+        width: 18rem;
+        height: 24rem;
+        /* Adjust height for better layout */
+        margin: 1rem;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header {
+        height: 3rem;
+        background-color: #f8f9fa;
+        text-align: center;
+        padding: 0.5rem;
+        font-weight: bold;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .justify-content-center {
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .card-img-top {
+        width: 100%;
+        height: 12rem;
+        /* Fixed height for images */
+        object-fit: cover;
+        /* Ensures proportional scaling */
+    }
+
+    .card-footer {
+        height: 3rem;
+        text-align: center;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-top: 1px solid #ddd;
+    }
+</style>

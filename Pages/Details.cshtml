@@ -1,0 +1,81 @@
+﻿@page "/list/view/{id}"
+@model MyAuto.Pages.DetailsModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container py-4">
+    <!-- Top Section: Title and Edit Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">@Model.Car?.Name</h1>
+        @if (Model.Car != null)
+        {
+            <div class="d-flex">
+                <a asp-page="/Edit" asp-route-id="@Model.Car.Id" class="btn btn-primary mr-3">Edit</a>
+                <a asp-page="/Delete" asp-route-id="@Model.Car.Id" class="btn btn-danger ml-2">Delete</a>
+            </div>
+        }
+    </div>
+
+    <!-- Image and Main Information -->
+    <div class="row">
+        <!-- Photo Carousel -->
+        <div class="col-md-8">
+            <div id="photoCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @if (Model.Car != null && Model.Car.Photos != null && Model.Car.Photos.Any())
+                    {
+                        @foreach (var photo in Model.Car.Photos)
+                        {
+                            <div class="carousel-item @(photo == Model.Car.Photos.First() ? "active" : "")">
+                                <img src="@photo.PhotoPath" class="d-block w-100" alt="Car Photo">
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active">
+                            <img src="~/images/noImage.jpg" class="d-block w-100" alt="No Image">
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#photoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#photoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Price and Contact Info -->
+        <div class="col-md-4 text-center info-section">
+            @if (Model.Car != null && Model.Car.Price != null)
+            {
+                <h3 class="text-success">Price: @(Model.Car.Price.ToString() + "$")</h3>
+            }
+            else
+            {
+                <h3 class="text-success">Price: Fasi Shetanxmebit</h3>
+            }
+            <p class="mt-3">
+                <strong>Contact:</strong> @(Model.Car?.Tel ?? "N/A")
+            </p>
+        </div>
+    </div>
+
+    <!-- Car Details Section -->
+    <div class="mt-4 info-section">
+        <h3 class="text-secondary">Detailed Description</h3>
+        <p>@(Model.Car?.Description ?? "No additional details provided.")</p>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Mileage:</strong> @(Model.Car?.Mileage ?? "N/A")</li>
+            <li class="list-group-item"><strong>Engine:</strong> @(Model.Car?.Engine ?? "N/A")</li>
+            <li class="list-group-item"><strong>Gear Box:</strong> @(Model.Car?.Transmission?.ToString() ?? "N/A")</li>
+            <li class="list-group-item"><strong>Fuel Type:</strong> @(Model.Car?.FuelType?.ToString() ?? "N/A")</li>
+            <li class="list-group-item"><strong>VIN:</strong> @(Model.Car?.VIN ?? "N/A")</li>
+        </ul>
+    </div>
+</div>
