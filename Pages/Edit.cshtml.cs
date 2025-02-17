@@ -31,7 +31,6 @@ namespace MyAuto.Pages
             if (id.HasValue)
             {
                 Car = _carRepository.GetCarWithPhotos(id.Value);
-
             }
             else
             {
@@ -39,30 +38,26 @@ namespace MyAuto.Pages
             }
 
             CategoryModelMapping = CarData.ManufacturerModels;
-
             ViewData["CategoryModelMapping"] = JsonSerializer.Serialize(CategoryModelMapping);
 
             return Page();
         }
 
         public class IndexModel : PageModel
-{
-
-    public JsonResult OnGetModels(string manufacturer)
-    {
-        Console.WriteLine($"Received manufacturer: {manufacturer}");
-        if (Enum.TryParse(manufacturer, out Manufacturer selectedManufacturer))
         {
-            var models = CarData.ManufacturerModels[selectedManufacturer];
-            return new JsonResult(models);
+
+            public JsonResult OnGetModels(string manufacturer)
+            {
+                Console.WriteLine($"Received manufacturer: {manufacturer}");
+                if (Enum.TryParse(manufacturer, out Manufacturer selectedManufacturer))
+                {
+                    var models = CarData.ManufacturerModels[selectedManufacturer];
+                    return new JsonResult(models);
+                }
+
+                return new JsonResult(new List<string> { "Model A", "Model B" });
+            }
         }
-
-        
-
-return new JsonResult(new List<string> { "Model A", "Model B" });    }
-}
-
-        
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -86,7 +81,7 @@ return new JsonResult(new List<string> { "Model A", "Model B" });    }
                 {
                     var fileName = $"{Guid.NewGuid()}_{photo.FileName}";
                     var filePath = Path.Combine("wwwroot/images", fileName);
-                    
+
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await photo.CopyToAsync(stream);

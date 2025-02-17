@@ -23,9 +23,10 @@
                 <span asp-validation-for="Car.Category" class="text-danger"></span>
             </div>
 
+            <!-- Manufacturer Dropdown -->
             <div class="col-md-4">
-                <label for="manufacturer" class="form-label">Manufacturer</label>
-                <select id="manufacturer" name="manufacturer" class="form-select">
+                <label asp-for="Car.Manufacturer" class="form-label">Manufacturer</label>
+                <select asp-for="Car.Manufacturer" class="form-select" id="manufacturer">
                     <option value="">Select Manufacturer</option>
                     @foreach (var manufacturer in Enum.GetValues(typeof(Manufacturer)))
                     {
@@ -35,9 +36,10 @@
                 <span asp-validation-for="Car.Manufacturer" class="text-danger"></span>
             </div>
 
+            <!-- Model Dropdown -->
             <div class="col-md-4">
-                <label for="model" class="form-label">Model</label>
-                <select id="model" name="model" class="form-select">
+                <label asp-for="Car.Model" class="form-label">Model</label>
+                <select asp-for="Car.Model" class="form-select" id="model">
                     <option value="">Select Model</option>
                 </select>
             </div>
@@ -116,20 +118,23 @@ else
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // Deserialize the mapping from the ViewData
+        const categoryModelMapping = @Html.Raw(ViewData["CategoryModelMapping"]);
+
         $(document).ready(function () {
             $('#manufacturer').change(function () {
-                var manufacturer = $(this).val();
-                $('#model').empty().append('<option value="">Select Model</option>');
-                if (manufacturer) {
-                    $.getJSON('@Url.Page("Edit", "Models", new { area = "" })', { manufacturer: manufacturer })
-                        .done(function (data) {
-                            $.each(data, function (index, model) {
-                                $('#model').append('<option value="' + model.value + '">' + model.text + '</option>');
-                            });
-                        })
-                        .fail(function () {
-                            alert('Failed to load models.');
-                        });
+                const manufacturer = $(this).val();
+                const modelsDropdown = $('#model');
+
+                // Clear existing options
+                modelsDropdown.empty().append('<option value="">Select Model</option>');
+
+                if (manufacturer && categoryModelMapping[manufacturer]) {
+                    categoryModelMapping[manufacturer].forEach(model => {
+                        const formattedModel = model.replace(/_/g, ' '); // Replace underscores with spaces
+                        const option = $('<option></option>').val(model).text(formattedModel);
+                        modelsDropdown.append(option);
+                    });
                 }
             });
         });
